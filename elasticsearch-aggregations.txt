@@ -1,0 +1,238 @@
+GET user_search_analysis/_search
+{
+  "aggs": {
+    "by_query_text": {
+      "terms": {
+        "field": "query_text.keyword",
+        "size": 100
+      }
+    }
+  }
+}  
+
+terms -> bu aggregat documentdagi so'zlarni necha marta qaytalanganligini ko'rsatadi bu yerda result top 5 ta eng ko'p takrorlangan terminni ko'rsatadi
+
+
+GET user_search_analysis/_search
+{
+  "query": {
+    "match": {
+      "query_text": "sotuvchi"
+    }
+  },
+  "aggregations": {
+    "popular_in_query_text": {
+      "significant_text":{
+        "field": "model_type"
+      }
+    }
+  }
+} 
+
+bu so'rov query_text bo'yicha  "sotuvchi" so'zi bo'lgan dokumentlarni model_type bo'yicha bucket larga yani guruhlarga ajratib chiqadi
+
+GET user_search_analysis/_search
+{
+  "query": {
+    "match": {
+      "query_text": {
+        "query": "sotuv menedjeri"
+      }
+    }
+  }
+}
+
+bu query_text modelida shu so'z bo'lgan modellarni qaytaradi
+
+GET user_search_analysis/_search
+{
+  "query": {
+    "match": {
+      "query_text": {
+        "query": "Sotuv menedjeri",
+        "operator": "and"
+      }
+    }
+  }
+}
+
+bu so'rov yuqoridagiga nisbatan aniqroq natijalarni ko'rsatadi
+
+
+GET user_search_analysis/_search
+{
+  "query": {
+    "match": {
+      "query_text": {
+        "query": "Sotuv menedjeri",
+        "minimum_should_match": 1
+      }
+    }
+  }
+}
+
+
+bu so'rovda minimum nechta termin mos kelishi ko'rsatilgan
+
+GET user_search_analysis/_search
+{
+  "query": {
+    "multi_match": {
+        "query": "query terms",
+        "fields": [
+            "query_text",
+            "model_type"
+          ]
+    }
+  }
+}
+
+bir nechta columnlardan qidirish
+
+
+match_phrase bu match ga nisbatan ko'proq natija olib keladi || recall
+
+
+
+---------aggregatlar-----------
+
+Metric Aggregations
+sum, min, max, avg
+
+GET user_search_analysis/_search
+{
+  "aggs": {
+    "sum_results_count": {
+      "avg": {
+        "field": "results_count"
+      }
+    }
+  }
+}
+
+--Stats aggregations--
+
+
+GET user_search_analysis/_search
+{
+  "size": 3,
+  "aggs": {
+    "all_stats_results_count": {
+      "stats": {
+        "field": "results_count"
+      }
+    }
+  }
+}
+
+bu yerda size hamma ko'rsatkichlar bo'yicha statistikalni ko'rsatadi.
+stats bu barcha ko'rsatkichlar bo'yicha aggregatlarni hisoblab beradi.
+
+
+GET user_search_analysis/_search
+{
+  "size": 0,
+  "query": {
+    "match": {
+      "model_type": "resume"
+    }
+  },
+  "aggs": {
+    "vacancies_avarage_results": {
+      "sum": {
+        "field": "results_count"
+      }
+    }
+  }
+}
+
+
+bu so'rov model_type resume bo'lgan documentlarni results_count larini aggregatlarini hisoblab beradi.
+
+
+-------Bucket aggregations----------
+
+
+bucket aggregatlari ma'lumotlarni gruppalab beradi. Ularning turlari:
+
+1. Date Histogram Aggregation
+
+2. Histogram Aggregation
+
+3. Range Aggregation
+
+4. Terms aggregation
+
+
+
+* 1. Date histogram aggregatlariga misol 
+GET user_search_analysis/_search
+{
+  "size": 0,
+  "aggs": {
+    "search_results_by_8_hrs": {
+      "date_histogram": {
+        "field": "created_at",
+        "fixed_interval": "8h"
+      }
+    }
+  }
+}   
+
+har 8 soatdagi aggregatlarni qaytaradi
+
+* 2. Histogram Aggregation
+GET user_search_analysis/_search
+{
+  "size": 0,
+  "aggs": {
+    "results_count_interval": {
+      "histogram": {
+        "field": "results_count",
+        "interval": 4
+      }
+    }
+  }
+}
+
+
+
+* 3. Range aggregation
+
+GET user_search_analysis/_search
+{
+  "size": 0,
+  "aggs": {
+    "results_count_range": {
+      "range": {
+        "field": "results_count",
+        "ranges": [
+          {
+            "to": 1
+          },
+          {
+            "from": 1,
+            "to": 25
+          },
+          {
+            "from": 25
+          }
+        ]
+      }
+    }
+  }
+}
+
+* 4. Terms aggregation
+GET user_search_analysis/_search
+{
+  "size": 5,
+  "aggs": {
+    "top_5_results": {
+      "terms": {
+        "field": "results_count",
+        "size": 5
+      }
+    }
+  }
+}
