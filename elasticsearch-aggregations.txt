@@ -236,3 +236,18 @@ GET user_search_analysis/_search
     }
   }
 }
+
+
+GET user_search_analysis/_search
+{
+    "size": 10,
+    "from": 20,
+    "query": {
+        "match": {
+            "query_text": "b"
+        }
+    }
+}
+
+pagination
+

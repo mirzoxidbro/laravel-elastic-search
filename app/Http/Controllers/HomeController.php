@@ -20,12 +20,29 @@ class HomeController extends Controller
         // ];
 
         $params = [
-            'index' => 'favourite_candy',
-            'id' => '1'
+            'index' => 'user_search_analysis',
+            'body'  => [
+                "size" => 10,
+                "from" => 20,
+                "query"=> [
+                    "multi_match" => [
+                      "query" =>    "sotuvchi",
+                      "fields" => [ "vacancies", "model_type"],
+                    //   "fuzziness" => 2
+                    ]
+            ]
+            ]
         ];
+        $response = $client->search($params);
 
-        $response = $client->get($params);
-        return $response;
+        $data['total_docs'] = $response['hits']['total']['value'];
+        $data['max_score']  = $response['hits']['max_score'];
+        $data['took']       = $response['took'];
+        $data['hits']       = $response['hits']['hits'];
+ 
+        return response()->json($data);
+        
+
     }
 }
 

@@ -1,0 +1,10 @@
+GET /my_index/my_type/_search
+{
+  "query": {
+    "multi_match": {
+      "fields":  [ "summary", "title", "tag" ],
+      "query":     "useless",
+      "fuzziness": "AUTO"
+    }
+  }
+}

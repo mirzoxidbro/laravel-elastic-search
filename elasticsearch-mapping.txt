@@ -1,0 +1,20 @@
+Mapping -> bu document maydonini qanday saqlash va indekslash jarayoni. Bu orqali documentdagi maydonni turi va formatini belgilanadi.
+
+Dynamic Mapping -> agar document maydonlari turi va formati belgilanmasa bu ishni elasticsearchni o'zi amalga oshiradi. Bu dynamic mapping deb ataladi.
+
+GET user_search_analysis/_mapping
+
+indeksni maydon turlari va formatini aniqlash uchun so'rov.
+
+stringlarni indekslayotganda ularni 2 xil type bilan indekslash mumkin. 
+        *1.string- bu asosan full text search uchun ishlaydi
+        *2.keyword- bu asosan aniq search aggregatlar olish yoki sorting uchun ishlatiladi
+
+"qidiruv natijalarida odatda tinish belgilar va katta kichik harflar inobatga olinmaydi. chunki text indekslanayotganda uni kichik harflarga o'tkazinb
+token ko'rinishida indekslaydi.  "text analysis"
+
+
+tokenizer: Bu, matnni bir nechta "token"larga bo’lib tashlaydi. Bu yerda “standard” tokenizer ishlatilgan, bu odatda matnni probel bilan ajratilgan so’zlar bo’yicha bo’ladi.
+
+char_filter: Bu, matnning har bir belgisini boshqa belgi yoki belgilar bilan almashtirish uchun ishlatiladi. Bu yerda “my_mappings_char_filter” nomli belgi filtri ishlatilgan. 
+Bu filtri sozlamalari esa “mappings” degan ro’yxatda berilgan. Bu ro’yxatda har bir kirill alifbosidagi harf o’zining lotin alifbosidagi ekvivalenti bilan almashtiriladi.
